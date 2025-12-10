@@ -5,53 +5,33 @@ This lab is designed to simulate a real-world enterprise Microsoft 365 environme
 The environment includes:
 
 1. Identity & Access Management
-
-* Azure AD (Entra ID) tenant
-
-* Conditional Access policies
-
-* MFA enforcement
-
-* Break-glass emergency account
-
-* Role-Based Access Control (RBAC)
+  * Azure AD (Entra ID) tenant
+  * Conditional Access policies
+  * MFA enforcement
+  * Break-glass emergency account
+  * Role-Based Access Control (RBAC)
 
 2. Email & Collaboration Security
-
-* Exchange Online
-
-* Defender for Office 365
-
-* Anti-spam & anti-phishing (EOP & MDO)
-
-* Safe Links & Safe Attachments
+  * Exchange Online
+  * Defender for Office 365
+  * Anti-spam & anti-phishing (EOP & MDO)
+  * Safe Links & Safe Attachments
 
 3. Endpoint Security
-
-* Microsoft Defender for Endpoint
-
-* ASR rules
-
-* Defender AV baseline
-
-* Threat & Vulnerability Management (TVM)
+  * Microsoft Defender for Endpoint
+  * ASR rules
+  * Defender AV baseline
+  * Threat & Vulnerability Management (TVM)
 
 4. Data Loss Prevention & Compliance
-
-* Sensitivity labels
-
-* DLP policies
-
-* Insider Risk Management (optional)
+  * Sensitivity labels
+  * DLP policies
+  * Insider Risk Management (optional)
 
 5. Monitoring & Threat Detection
-
-* Microsoft 365 Defender unified incidents
-
-* Sentinel (optional)
-
-* KQL-based threat hunting
-
+  * Microsoft 365 Defender unified incidents
+  * Sentinel (optional)
+  * KQL-based threat hunting
 
 **High-Level Architecture (Text Diagram)**
 ```
@@ -84,3 +64,4 @@ The environment includes:
                  │ KQL Hunting        │
                  └────────────────────┘
 ```
+
