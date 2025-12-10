@@ -1,81 +1,86 @@
 This lab is designed to simulate a real-world enterprise Microsoft 365 environment with modern security controls applied. It focuses on identity, email, endpoints, data protection, and SIEM monitoring.
 
-Lab Components
+**Lab Components**
 
 The environment includes:
 
-Identity & Access Management
+1. Identity & Access Management
 
-Azure AD (Entra ID) tenant
+* Azure AD (Entra ID) tenant
 
-Conditional Access policies
+* Conditional Access policies
 
-MFA enforcement
+* MFA enforcement
 
-Break-glass emergency account
+* Break-glass emergency account
 
-Role-Based Access Control (RBAC)
+* Role-Based Access Control (RBAC)
 
-Email & Collaboration Security
+2. Email & Collaboration Security
 
-Exchange Online
+* Exchange Online
 
-Defender for Office 365
+* Defender for Office 365
 
-Anti-spam & anti-phishing (EOP & MDO)
+* Anti-spam & anti-phishing (EOP & MDO)
 
-Safe Links & Safe Attachments
+* Safe Links & Safe Attachments
 
-Endpoint Security
+3. Endpoint Security
 
-Microsoft Defender for Endpoint
+* Microsoft Defender for Endpoint
 
-ASR rules
+* ASR rules
 
-Defender AV baseline
+* Defender AV baseline
 
-Threat & Vulnerability Management (TVM)
+* Threat & Vulnerability Management (TVM)
 
-Data Loss Prevention & Compliance
+4. Data Loss Prevention & Compliance
 
-Sensitivity labels
+* Sensitivity labels
 
-DLP policies
+* DLP policies
 
-Insider Risk Management (optional)
+* Insider Risk Management (optional)
 
-Monitoring & Threat Detection
+5. Monitoring & Threat Detection
 
-Microsoft 365 Defender unified incidents
+* Microsoft 365 Defender unified incidents
 
-Sentinel (optional)
+* Sentinel (optional)
 
-KQL-based threat hunting
+* KQL-based threat hunting
 
-High-Level Architecture (Text Diagram)
+
+**High-Level Architecture (Text Diagram)**
+```
                 ┌─────────────────────────┐
-                │      Azure AD / Entra   │
+                │     Azure AD / Entra    │
                 │   - Identities          │
                 │   - CA policies         │
-                └───────────┬────────────┘
+                └───────────┬─────────────┘
                             │
         ┌───────────────────┼────────────────────┐
         │                   │                    │
-┌───────────────┐   ┌──────────────┐   ┌─────────────────┐
+┌────────────────┐   ┌──────────────┐   ┌──────────────────┐
 │  Exchange      │   │ SharePoint/  │   │ Endpoints:       │
 │  Online        │   │ OneDrive     │   │ Win10/11 Clients │
 │  MDO/EOP       │   │ Labels/DLP   │   │ MDE Agent        │
-└───────────────┘   └──────────────┘   └─────────────────┘
+└────────────────┘   └──────────────┘   └──────────────────┘
         │                   │                     │
         └───────────────────┼─────────────────────┘
                             │
-                 ┌──────────▼─────────┐
+                            ▼
+                 ┌────────────────────┐
                  │  M365 Defender     │
                  │  - Incidents       │
                  │  - Alerts          │
                  └─────────┬──────────┘
                            │
-                 ┌────────▼──────────┐
+                           ▼
+                 ┌────────────────────┐
                  │ Sentinel (Optional)│
                  │ KQL Hunting        │
                  └────────────────────┘
+```
