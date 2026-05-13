@@ -36,6 +36,7 @@ Use the least-privilege role required for each activity after the initial lab se
 | Global Administrator | Initial setup, emergency recovery, role assignment |
 | Security Administrator | Defender, security portal, security settings |
 | Conditional Access Administrator | Conditional Access policy configuration |
+| Privileged Role Administrator | Role assignment and privileged access review |
 | Privileged Role Administrator | Role assignment and PIM-style configuration |
 | Exchange Administrator | Exchange Online and EOP settings |
 | Compliance Administrator | Purview, DLP, sensitivity labels |
@@ -49,6 +50,10 @@ Use the least-privilege role required for each activity after the initial lab se
 | PowerShell 7+ | Running verification scripts and Graph commands |
 | Microsoft Graph PowerShell SDK | Querying tenant settings and reports |
 | Exchange Online PowerShell module | Reviewing mail protection settings where needed |
+| Screenshot tool | Evidence capture where export is unavailable |
+| Secure password manager | Emergency access account storage |
+
+## Recommended PowerShell modules
 | Microsoft Teams or browser session | Admin portal access |
 | Screenshot tool | Evidence capture where export is unavailable |
 | Secure password manager | Emergency access account storage |
@@ -86,12 +91,16 @@ Capture the following before applying hardening:
 - Current Conditional Access policy list.
 - Admin role assignments.
 - MFA registration status.
+- Authentication method settings.
 - Authentication methods policy state.
 - Exchange Online protection policies.
 - Defender security portal settings.
 - Audit log status.
 - DLP and sensitivity label configuration.
 - Endpoint onboarding and compliance status.
+- Existing exclusions or exceptions.
+
+## Required lab record
 - Any existing exclusions or exceptions.
 
 ## Required lab records
