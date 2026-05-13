@@ -37,6 +37,7 @@ Use the least-privilege role required for each activity after the initial lab se
 | Security Administrator | Defender, security portal, security settings |
 | Conditional Access Administrator | Conditional Access policy configuration |
 | Privileged Role Administrator | Role assignment and privileged access review |
+| Privileged Role Administrator | Role assignment and PIM-style configuration |
 | Exchange Administrator | Exchange Online and EOP settings |
 | Compliance Administrator | Purview, DLP, sensitivity labels |
 | Intune Administrator | Endpoint compliance and security baselines |
@@ -53,11 +54,20 @@ Use the least-privilege role required for each activity after the initial lab se
 | Secure password manager | Emergency access account storage |
 
 ## Recommended PowerShell modules
+| Microsoft Teams or browser session | Admin portal access |
+| Screenshot tool | Evidence capture where export is unavailable |
+| Secure password manager | Emergency access account storage |
+
+## PowerShell modules
+
+Recommended modules:
 
 ```powershell
 Install-Module Microsoft.Graph -Scope CurrentUser
 Install-Module ExchangeOnlineManagement -Scope CurrentUser
 ```
+
+The verification script is designed to be read-only and to degrade gracefully when optional modules or permissions are unavailable.
 
 ## Pre-flight safety checklist
 
@@ -82,6 +92,7 @@ Capture the following before applying hardening:
 - Admin role assignments.
 - MFA registration status.
 - Authentication method settings.
+- Authentication methods policy state.
 - Exchange Online protection policies.
 - Defender security portal settings.
 - Audit log status.
@@ -90,6 +101,11 @@ Capture the following before applying hardening:
 - Existing exclusions or exceptions.
 
 ## Required lab record
+- Any existing exclusions or exceptions.
+
+## Required lab records
+
+Create a lab record with:
 
 | Field | Value |
 | --- | --- |

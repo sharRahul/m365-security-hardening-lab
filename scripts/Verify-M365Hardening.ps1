@@ -52,6 +52,7 @@ Write-Host "Mode: read-only" -ForegroundColor Cyan
 Write-Host "Started: $(Get-Date)" -ForegroundColor Cyan
 Write-Host ""
 
+# Local PowerShell environment checks
 Add-CheckResult -Area "Local" -Check "PowerShell version" -Status "Info" -Evidence $PSVersionTable.PSVersion.ToString() -Recommendation "Use PowerShell 7+ for best compatibility."
 
 if (Get-Module -ListAvailable -Name Microsoft.Graph.Authentication) {
@@ -66,6 +67,7 @@ if (Get-Module -ListAvailable -Name ExchangeOnlineManagement) {
     Add-CheckResult -Area "Local" -Check "Exchange Online PowerShell module" -Status "Missing" -Evidence "ExchangeOnlineManagement module not found" -Recommendation "Install-Module ExchangeOnlineManagement -Scope CurrentUser"
 }
 
+# Microsoft Graph connection checks
 if (Test-CommandAvailable -CommandName Get-MgContext) {
     $MgContext = Get-MgContext
     if ($null -ne $MgContext) {
@@ -77,6 +79,7 @@ if (Test-CommandAvailable -CommandName Get-MgContext) {
     Add-CheckResult -Area "Graph" -Check "Microsoft Graph connection" -Status "Unavailable" -Evidence "Get-MgContext command unavailable" -Recommendation "Install and import Microsoft.Graph."
 }
 
+# Conditional Access policies
 if (Test-CommandAvailable -CommandName Get-MgIdentityConditionalAccessPolicy) {
     try {
         $Policies = Get-MgIdentityConditionalAccessPolicy -All
@@ -92,6 +95,7 @@ if (Test-CommandAvailable -CommandName Get-MgIdentityConditionalAccessPolicy) {
     Add-CheckResult -Area "Identity" -Check "Conditional Access policies" -Status "Skipped" -Evidence "Get-MgIdentityConditionalAccessPolicy unavailable" -Recommendation "Install Microsoft.Graph.Identity.SignIns module."
 }
 
+# Directory roles
 if (Test-CommandAvailable -CommandName Get-MgDirectoryRole) {
     try {
         $Roles = Get-MgDirectoryRole -All
@@ -104,6 +108,7 @@ if (Test-CommandAvailable -CommandName Get-MgDirectoryRole) {
     Add-CheckResult -Area "Identity" -Check "Active directory roles" -Status "Skipped" -Evidence "Get-MgDirectoryRole unavailable" -Recommendation "Install Microsoft.Graph.Identity.DirectoryManagement module."
 }
 
+# Users with display names containing breakglass or emergency
 if (Test-CommandAvailable -CommandName Get-MgUser) {
     try {
         $EmergencyUsers = Get-MgUser -All -Property Id,DisplayName,UserPrincipalName,AccountEnabled | Where-Object {
@@ -119,6 +124,7 @@ if (Test-CommandAvailable -CommandName Get-MgUser) {
     Add-CheckResult -Area "Identity" -Check "Emergency access accounts" -Status "Skipped" -Evidence "Get-MgUser unavailable" -Recommendation "Install Microsoft.Graph.Users module."
 }
 
+# Authentication methods policy availability
 if (Test-CommandAvailable -CommandName Get-MgPolicyAuthenticationMethodPolicy) {
     try {
         $AuthPolicy = Get-MgPolicyAuthenticationMethodPolicy
@@ -130,6 +136,7 @@ if (Test-CommandAvailable -CommandName Get-MgPolicyAuthenticationMethodPolicy) {
     Add-CheckResult -Area "Identity" -Check "Authentication methods policy" -Status "Skipped" -Evidence "Get-MgPolicyAuthenticationMethodPolicy unavailable" -Recommendation "Install Microsoft.Graph.Identity.SignIns module."
 }
 
+# Organisation info
 if (Test-CommandAvailable -CommandName Get-MgOrganization) {
     try {
         $Org = Get-MgOrganization
@@ -142,6 +149,7 @@ if (Test-CommandAvailable -CommandName Get-MgOrganization) {
     Add-CheckResult -Area "Tenant" -Check "Organisation details" -Status "Skipped" -Evidence "Get-MgOrganization unavailable" -Recommendation "Install Microsoft.Graph.Identity.DirectoryManagement module."
 }
 
+# Manual evidence reminders for areas that often require portal or product-specific modules.
 Add-CheckResult -Area "Email" -Check "EOP and Defender for Office 365 policies" -Status "Manual" -Evidence "Manual review required" -Recommendation "Export or screenshot anti-phishing, anti-malware, Safe Links, and Safe Attachments policies."
 Add-CheckResult -Area "Endpoint" -Check "Endpoint security baseline" -Status "Manual" -Evidence "Manual review required" -Recommendation "Capture Intune endpoint security baseline, device compliance, and Defender onboarding evidence."
 Add-CheckResult -Area "Purview" -Check "DLP and sensitivity labels" -Status "Manual" -Evidence "Manual review required" -Recommendation "Capture DLP policies, label publication, and audit log evidence."
