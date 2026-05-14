@@ -31,21 +31,86 @@ Use this repository to:
 ├── CHANGELOG.md
 ├── LICENSE
 ├── docs/
+│   ├── iso27001-control-mapping-annex.md
 │   ├── lab-architecture.md
 │   ├── deployment-prerequisites.md
 │   ├── step-by-step-lab-guide.md
 │   └── rollback-procedures.md
-└── scripts/
-    └── Verify-M365Hardening.ps1
+├── scripts/
+│   ├── Deploy-ConditionalAccessPolicies.ps1
+│   ├── Deploy-PurviewDLP.ps1
+│   ├── Deploy-SentinelWorkspace.ps1
+│   ├── Export-M365Baseline.ps1
+│   ├── Get-M365SecureScore.ps1
+│   └── Verify-M365Hardening.ps1
+└── .github/
+    └── workflows/
+        └── test-scripts.yml
 ```
 
 ## Quick start
 
 1. Read [`docs/deployment-prerequisites.md`](docs/deployment-prerequisites.md) and confirm your licence, role, and tenant assumptions.
 2. Review the architecture in [`docs/lab-architecture.md`](docs/lab-architecture.md).
-3. Follow [`docs/step-by-step-lab-guide.md`](docs/step-by-step-lab-guide.md) from baseline capture through identity, email, endpoint, data protection, and monitoring hardening.
-4. Run [`scripts/Verify-M365Hardening.ps1`](scripts/Verify-M365Hardening.ps1) in report-only mode to check configuration state.
-5. Keep [`docs/rollback-procedures.md`](docs/rollback-procedures.md) open during the lab, especially when configuring Conditional Access or privileged access controls.
+3. Capture the pre-change tenant state:
+
+   ```powershell
+   pwsh ./scripts/Export-M365Baseline.ps1
+   ```
+
+4. Capture the current Microsoft Secure Score:
+
+   ```powershell
+   pwsh ./scripts/Get-M365SecureScore.ps1
+   ```
+
+5. Follow [`docs/step-by-step-lab-guide.md`](docs/step-by-step-lab-guide.md) from baseline capture through identity, email, endpoint, data protection, and monitoring hardening.
+6. Deploy the lab Conditional Access policy set in report-only mode first:
+
+   ```powershell
+   pwsh ./scripts/Deploy-ConditionalAccessPolicies.ps1 `
+     -BreakGlassUserIds @('<break-glass-object-id-1>', '<break-glass-object-id-2>') `
+     -HighRiskCountryCodes @('KP', 'IR', 'SY') `
+     -ReportOnly
+   ```
+
+7. Run [`scripts/Verify-M365Hardening.ps1`](scripts/Verify-M365Hardening.ps1) in report-only mode to check configuration state.
+8. Keep [`docs/rollback-procedures.md`](docs/rollback-procedures.md) open during the lab, especially when configuring Conditional Access or privileged access controls.
+
+### Sentinel add-on
+
+The Sentinel add-on creates a Log Analytics workspace, enables Microsoft Sentinel, attempts to enable Microsoft security data connectors, and deploys starter scheduled analytics rules for common identity and Microsoft 365 attack indicators.
+
+Prerequisites:
+
+- Azure subscription access with permission to create resource groups and workspaces.
+- PowerShell modules: `Az.Accounts`, `Az.Resources`, and `Az.OperationalInsights`.
+- Appropriate Microsoft Sentinel and source workload licensing for the connectors you enable.
+
+Run:
+
+```powershell
+pwsh ./scripts/Deploy-SentinelWorkspace.ps1 `
+  -ResourceGroupName rg-m365-lab-sentinel `
+  -WorkspaceName law-m365-lab `
+  -Location uksouth
+```
+
+### Purview add-on
+
+The Purview add-on creates two audit-only DLP policies for UK personal data and financial data across Exchange, SharePoint, OneDrive, and Teams. Keep policies in audit-only mode until you have validated expected matches and false positives in the lab.
+
+Run audit-only deployment:
+
+```powershell
+pwsh ./scripts/Deploy-PurviewDLP.ps1
+```
+
+Move the lab policies to block mode only after validation:
+
+```powershell
+pwsh ./scripts/Deploy-PurviewDLP.ps1 -Enforce
+```
 
 ## High-level lab flow
 
@@ -60,7 +125,7 @@ Baseline tenant -> Identity protection -> Email protection -> Endpoint security 
 | Tenant | Microsoft 365 developer or trial tenant | Dedicated lab tenant |
 | Licence | Depends on selected controls | Microsoft 365 E5 trial for full Defender, Purview, Entra ID P2 style labs |
 | Admin roles | Global Administrator for lab setup | Least privilege roles after setup |
-| PowerShell | PowerShell 7+ | PowerShell 7+ with Microsoft Graph modules |
+| PowerShell | PowerShell 7+ with Microsoft Graph and Exchange Online modules | PowerShell 7+ with Microsoft Graph, ExchangeOnlineManagement, Az.Accounts, Az.Resources, and Az.OperationalInsights |
 | Devices | Optional test Windows endpoint | Windows 11 test VM joined or enrolled to the tenant |
 
 ## Safety rules
@@ -84,6 +149,7 @@ This lab can generate evidence for:
 - Audit logging and monitoring.
 - DLP and sensitivity labelling.
 - Configuration management and change evidence.
+- ISO 27001:2022 Annex A control traceability through [`docs/iso27001-control-mapping-annex.md`](docs/iso27001-control-mapping-annex.md).
 
 ## Contributing
 
