@@ -16,22 +16,30 @@ The lab should be:
 
 ```mermaid
 flowchart LR
-    A[Test Users] --> B[Microsoft Entra ID]
-    B --> C[Conditional Access]
-    B --> D[Privileged Roles]
-    B --> E[Microsoft 365 Admin Center]
-    E --> F[Exchange Online Protection]
-    E --> G[Defender for Office 365]
-    E --> H[Purview Compliance]
-    I[Test Windows Device] --> J[Intune / Endpoint Security]
-    J --> K[Defender for Endpoint]
-    F --> L[Audit Logs]
-    G --> L
-    H --> L
-    K --> L
-    L --> M[Security Portal / Sentinel Optional]
-    M --> N[Evidence Pack]
+    Users[Lab users and administrators] --> Entra[Microsoft Entra ID]
+    Entra --> CA[Conditional Access]
+    Entra --> PIM[Privileged Identity Management]
+    CA --> Workloads[Microsoft 365 workloads]
+    Workloads --> Exchange[Exchange Online]
+    Workloads --> SharePoint[SharePoint and OneDrive]
+    Workloads --> Teams[Microsoft Teams]
+
+    Purview[Microsoft Purview] --> DLP[DLP policies]
+    Purview --> Labels[Sensitivity labels]
+    DLP --> Workloads
+    Labels --> Workloads
+
+    Device[Test Windows endpoint] --> Intune[Intune endpoint security]
+    Intune --> MDE[Microsoft Defender for Endpoint]
+    MDE --> Sentinel[Microsoft Sentinel]
+    Workloads --> Sentinel
+    Entra --> Sentinel
+    Sentinel --> LogAnalytics[Log Analytics workspace]
+    LogAnalytics --> Analytics[Scheduled analytics rules]
+    Analytics --> Incidents[Incidents and evidence pack]
 ```
+
+This flow shows the lab's main control paths: Microsoft Entra ID feeds Conditional Access before access reaches Microsoft 365 workloads; Microsoft Defender for Endpoint sends endpoint telemetry into Sentinel and Log Analytics; and Microsoft Purview drives DLP and sensitivity label controls across Exchange, SharePoint, OneDrive, and Teams.
 
 ## Tenant components
 
@@ -114,70 +122,38 @@ Before enforcing Conditional Access or privileged role restrictions:
 4. Monitor and review them separately.
 5. Confirm both accounts can sign in before enabling enforcement.
 6. Keep one active admin session open during changes.
+
 This lab is designed to simulate a real-world enterprise Microsoft 365 environment with modern security controls applied. It focuses on identity, email, endpoints, data protection, and SIEM monitoring.
 
-**Lab Components**
+## Lab components
 
 The environment includes:
 
-1. Identity & Access Management
-  * Azure AD (Entra ID) tenant
-  * Conditional Access policies
-  * MFA enforcement
-  * Break-glass emergency account
-  * Role-Based Access Control (RBAC)
+1. Identity and access management
+   - Microsoft Entra ID tenant
+   - Conditional Access policies
+   - MFA enforcement
+   - Break-glass emergency accounts
+   - Role-Based Access Control and Privileged Identity Management
 
-2. Email & Collaboration Security
-  * Exchange Online
-  * Defender for Office 365
-  * Anti-spam & anti-phishing (EOP & MDO)
-  * Safe Links & Safe Attachments
+2. Email and collaboration security
+   - Exchange Online
+   - Defender for Office 365
+   - Anti-spam and anti-phishing controls
+   - Safe Links and Safe Attachments
 
-3. Endpoint Security
-  * Microsoft Defender for Endpoint
-  * ASR rules
-  * Defender AV baseline
-  * Threat & Vulnerability Management (TVM)
+3. Endpoint security
+   - Microsoft Defender for Endpoint
+   - Attack surface reduction rules
+   - Defender Antivirus baseline
+   - Threat and Vulnerability Management
 
-4. Data Loss Prevention & Compliance
-  * Sensitivity labels
-  * DLP policies
-  * Insider Risk Management (optional)
+4. Data loss prevention and compliance
+   - Sensitivity labels
+   - DLP policies
+   - Insider Risk Management, where licensed
 
-5. Monitoring & Threat Detection
-  * Microsoft 365 Defender unified incidents
-  * Sentinel (optional)
-  * KQL-based threat hunting
-
-**High-Level Architecture (Text Diagram)**
-```
-                ┌─────────────────────────┐
-                │     Azure AD / Entra    │
-                │   - Identities          │
-                │   - CA policies         │
-                └───────────┬─────────────┘
-                            │
-        ┌───────────────────┼────────────────────┐
-        │                   │                    │
-┌────────────────┐   ┌──────────────┐   ┌──────────────────┐
-│  Exchange      │   │ SharePoint/  │   │ Endpoints:       │
-│  Online        │   │ OneDrive     │   │ Win10/11 Clients │
-│  MDO/EOP       │   │ Labels/DLP   │   │ MDE Agent        │
-└────────────────┘   └──────────────┘   └──────────────────┘
-        │                   │                     │
-        └───────────────────┼─────────────────────┘
-                            │
-                            ▼
-                 ┌────────────────────┐
-                 │  M365 Defender     │
-                 │  - Incidents       │
-                 │  - Alerts          │
-                 └─────────┬──────────┘
-                           │
-                           ▼
-                 ┌────────────────────┐
-                 │ Sentinel (Optional)│
-                 │ KQL Hunting        │
-                 └────────────────────┘
-```
-
+5. Monitoring and threat detection
+   - Microsoft Defender XDR unified incidents
+   - Sentinel add-on
+   - KQL-based threat hunting
