@@ -1,0 +1,51 @@
+name: Test PowerShell scripts
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  psscriptanalyzer:
+    name: Run PSScriptAnalyzer
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
+
+      - name: Analyse scripts
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $results = Invoke-ScriptAnalyzer -Path ./scripts -Recurse -Severity Error, Warning
+
+          foreach ($result in $results) {
+            $level = if ($result.Severity -eq 'Error') { 'error' } else { 'warning' }
+            $scriptPath = $result.ScriptPath.Replace("$PWD/", '')
+            $line = if ($result.Line) { $result.Line } else { 1 }
+            $column = if ($result.Column) { $result.Column } else { 1 }
+            $message = $result.Message -replace "`r?`n", ' '
+            Write-Host "::$level file=$scriptPath,line=$line,col=$column,title=$($result.RuleName)::$message"
+          }
+
+          $errors = @($results | Where-Object { $_.Severity -eq 'Error' })
+          if ($errors.Count -gt 0) {
+            $errors | Format-Table -AutoSize
+            throw "PSScriptAnalyzer found $($errors.Count) error-level finding(s)."
+          }
+
+          $warnings = @($results | Where-Object { $_.Severity -eq 'Warning' })
+          if ($warnings.Count -gt 0) {
+            Write-Host "PSScriptAnalyzer completed with $($warnings.Count) warning-level finding(s). See workflow annotations."
+          } else {
+            Write-Host 'PSScriptAnalyzer completed with no error or warning findings.'
+          }
