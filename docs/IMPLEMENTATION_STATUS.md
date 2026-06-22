@@ -16,7 +16,7 @@ This document separates working lab capability from partial or planned areas and
 | Safe execution guidance | Working | See `docs/safe-execution-modes.md`. |
 | Verification | Partial | `scripts/Verify-M365Hardening.ps1` automates selected identity and tenant checks; email, endpoint, Purview, and monitoring evidence still require manual review. |
 | Purview DLP deployment | Working starter | Creates or updates starter lab DLP policies; validate in audit-only mode first. |
-| Sentinel deployment | Working starter | Creates a workspace, attempts data connectors, and deploys starter analytics rules. Review cost and teardown manually. |
+| Sentinel deployment | Working starter | Creates a workspace, attempts data connectors, deploys starter analytics rules, and no longer prints workspace shared keys. Review cost and teardown manually. |
 | CI | Partial | GitHub Actions runs PSScriptAnalyzer. Pester tests and dry-run validation are still missing. |
 
 ## Safe execution rule
@@ -39,7 +39,6 @@ Conditional Access changes must follow this order:
 1. Link `docs/safe-execution-modes.md` from the README after the README can be updated safely.
 2. Add Pester tests for script parameter validation and `-WhatIf` behaviour.
 3. Add a Sentinel cleanup or teardown script for community lab users.
-4. Remove sensitive workspace key output from the Sentinel deployment script.
-5. Expand `Verify-M365Hardening.ps1` coverage for email, endpoint, Purview, and monitoring checks.
-6. Add a permissions matrix for every script.
-7. Add synthetic example outputs for evidence packs.
+4. Expand `Verify-M365Hardening.ps1` coverage for email, endpoint, Purview, and monitoring checks.
+5. Add a permissions matrix for every script.
+6. Add synthetic example outputs for evidence packs.
