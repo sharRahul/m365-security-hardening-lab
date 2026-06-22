@@ -293,7 +293,6 @@ foreach ($rule in $AnalyticsRules) {
 }
 
 $workspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $ResourceGroupName -Name $WorkspaceName
-$sharedKeys = Get-AzOperationalInsightsWorkspaceSharedKey -ResourceGroupName $ResourceGroupName -Name $WorkspaceName
 
 Write-Host ''
 Write-Host 'Data connector results' -ForegroundColor Cyan
@@ -309,5 +308,5 @@ Write-Host 'Workspace onboarding output' -ForegroundColor Green
     WorkspaceName = $WorkspaceName
     ResourceGroup = $ResourceGroupName
     WorkspaceId   = $workspace.CustomerId
-    PrimaryKey    = $sharedKeys.PrimarySharedKey
+    Note          = 'Workspace shared keys are intentionally not printed. Retrieve keys manually only when required and store them securely.'
 } | Format-List
