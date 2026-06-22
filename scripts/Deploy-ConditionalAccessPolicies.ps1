@@ -5,10 +5,19 @@ Deploys recommended Microsoft Entra Conditional Access policies for a Microsoft 
 .DESCRIPTION
 Creates a small, opinionated set of lab Conditional Access policies covering MFA, legacy authentication blocking, device requirements, risky geography blocking, and stronger administrator controls.
 
-The script checks for existing policies with the same display name before creation. Use -WhatIf to preview without creating policies. Use -ReportOnly to create policies in report-only mode.
+The script is pilot-scoped by default. You must provide -PilotUserIds or -PilotGroupIds unless you explicitly pass -AllUsersScope. Use -WhatIf to preview without creating policies. Use -ReportOnly to create policies in report-only mode.
 
 .PARAMETER BreakGlassUserIds
 Object IDs of emergency access accounts that must be excluded from the lab policies.
+
+.PARAMETER PilotUserIds
+Optional object IDs of pilot users to include in the lab policy scope.
+
+.PARAMETER PilotGroupIds
+Optional object IDs of pilot groups to include in the lab policy scope.
+
+.PARAMETER AllUsersScope
+Explicitly scope the policies to all users. This is not the default because the repository is intended for lab and community use.
 
 .PARAMETER HighRiskCountryCodes
 Two-letter ISO country or region codes to include in the high-risk country named location. If omitted, the geography-blocking policy is skipped.
@@ -20,10 +29,25 @@ Display name for the Conditional Access country named location.
 Creates policies in report-only mode instead of enabled mode.
 
 .EXAMPLE
-pwsh ./scripts/Deploy-ConditionalAccessPolicies.ps1 -BreakGlassUserIds @('00000000-0000-0000-0000-000000000001') -ReportOnly -WhatIf
+pwsh ./scripts/Deploy-ConditionalAccessPolicies.ps1 `
+  -BreakGlassUserIds @('00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000002') `
+  -PilotGroupIds @('11111111-1111-1111-1111-111111111111') `
+  -ReportOnly `
+  -WhatIf
 
 .EXAMPLE
-pwsh ./scripts/Deploy-ConditionalAccessPolicies.ps1 -BreakGlassUserIds @('00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000002') -HighRiskCountryCodes @('KP','IR','SY') -ReportOnly
+pwsh ./scripts/Deploy-ConditionalAccessPolicies.ps1 `
+  -BreakGlassUserIds @('00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000002') `
+  -PilotGroupIds @('11111111-1111-1111-1111-111111111111') `
+  -HighRiskCountryCodes @('KP','IR','SY') `
+  -ReportOnly
+
+.EXAMPLE
+pwsh ./scripts/Deploy-ConditionalAccessPolicies.ps1 `
+  -BreakGlassUserIds @('00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000002') `
+  -AllUsersScope `
+  -ReportOnly `
+  -WhatIf
 
 .NOTES
 Required module: Microsoft.Graph.
@@ -36,6 +60,15 @@ param(
     [ValidateNotNullOrEmpty()]
     [string[]]$BreakGlassUserIds,
 
+    [Parameter(Mandatory = $false)]
+    [string[]]$PilotUserIds = @(),
+
+    [Parameter(Mandatory = $false)]
+    [string[]]$PilotGroupIds = @(),
+
+    [Parameter(Mandatory = $false)]
+    [switch]$AllUsersScope,
+
     [ValidatePattern('^[A-Z]{2}$')]
     [string[]]$HighRiskCountryCodes = @(),
 
@@ -46,7 +79,17 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# Directory role template IDs used by Conditional Access includeRoles.
+if (-not $AllUsersScope -and $PilotUserIds.Count -eq 0 -and $PilotGroupIds.Count -eq 0) {
+    throw 'Safe default requires -PilotUserIds or -PilotGroupIds. Use -AllUsersScope only when you intentionally want all-user lab policies.'
+}
+
+if ($AllUsersScope) {
+    Write-Warning 'All-users scope was explicitly requested. Confirm this is a lab tenant, break-glass access works, and report-only results have been reviewed.'
+} else {
+    Write-Host 'Using pilot scope. Policies will include only the supplied pilot users and/or groups.' -ForegroundColor Cyan
+}
+
+# Directory role template IDs used by Conditional Access includeRoles when -AllUsersScope is explicitly selected.
 $PrivilegedRoleTemplateIds = @(
     '62e90394-69f5-4237-9190-012177145e10', # Global Administrator
     'e8611ab8-c189-46e8-94e1-60213ab1f814', # Privileged Role Administrator
@@ -57,16 +100,51 @@ $PrivilegedRoleTemplateIds = @(
     '729827e3-9c14-49f7-bb1b-9608f156bbb8'  # Helpdesk Administrator
 )
 
+function New-ConditionalAccessUserScope {
+    param(
+        [switch]$UseAllUsers,
+        [string[]]$Users,
+        [string[]]$Groups,
+        [string[]]$ExcludedUsers
+    )
+
+    $scope = @{
+        excludeUsers = $ExcludedUsers
+    }
+
+    if ($UseAllUsers) {
+        $scope['includeUsers'] = @('All')
+        return $scope
+    }
+
+    if ($Users.Count -gt 0) {
+        $scope['includeUsers'] = $Users
+    }
+    if ($Groups.Count -gt 0) {
+        $scope['includeGroups'] = $Groups
+    }
+
+    return $scope
+}
+
+$PilotScope = New-ConditionalAccessUserScope -UseAllUsers:$AllUsersScope -Users $PilotUserIds -Groups $PilotGroupIds -ExcludedUsers $BreakGlassUserIds
+$AdminScope = if ($AllUsersScope) {
+    @{
+        includeRoles = $PrivilegedRoleTemplateIds
+        excludeUsers = $BreakGlassUserIds
+    }
+} else {
+    # In safe community mode, the admin hardening policy is also restricted to the supplied pilot users/groups.
+    $PilotScope
+}
+
 $PolicyDefinitions = @(
     @{
-        DisplayName   = 'LAB-CA-Require-MFA-All-Users'
-        Description   = 'Require MFA for all users, excluding emergency access accounts.'
+        DisplayName   = 'LAB-CA-Require-MFA-Pilot-Users'
+        Description   = 'Require MFA for pilot users or groups, excluding emergency access accounts.'
         RequiresNamedLocation = $false
         Conditions    = @{
-            users = @{
-                includeUsers = @('All')
-                excludeUsers = $BreakGlassUserIds
-            }
+            users = $PilotScope
             applications = @{
                 includeApplications = @('All')
             }
@@ -78,14 +156,11 @@ $PolicyDefinitions = @(
         }
     }
     @{
-        DisplayName   = 'LAB-CA-Block-Legacy-Authentication'
-        Description   = 'Block Exchange ActiveSync and other legacy clients.'
+        DisplayName   = 'LAB-CA-Block-Legacy-Authentication-Pilot'
+        Description   = 'Block Exchange ActiveSync and other legacy clients for the pilot scope.'
         RequiresNamedLocation = $false
         Conditions    = @{
-            users = @{
-                includeUsers = @('All')
-                excludeUsers = $BreakGlassUserIds
-            }
+            users = $PilotScope
             applications = @{
                 includeApplications = @('All')
             }
@@ -97,14 +172,11 @@ $PolicyDefinitions = @(
         }
     }
     @{
-        DisplayName   = 'LAB-CA-Require-Compliant-Or-Hybrid-Device'
-        Description   = 'Require a compliant device or Microsoft Entra hybrid joined device for Microsoft 365 access.'
+        DisplayName   = 'LAB-CA-Require-Compliant-Or-Hybrid-Device-Pilot'
+        Description   = 'Require a compliant device or Microsoft Entra hybrid joined device for Microsoft 365 access in the pilot scope.'
         RequiresNamedLocation = $false
         Conditions    = @{
-            users = @{
-                includeUsers = @('All')
-                excludeUsers = $BreakGlassUserIds
-            }
+            users = $PilotScope
             applications = @{
                 includeApplications = @('All')
             }
@@ -116,14 +188,11 @@ $PolicyDefinitions = @(
         }
     }
     @{
-        DisplayName   = 'LAB-CA-Block-High-Risk-Countries'
-        Description   = 'Block sign-ins from the configured high-risk country named location.'
+        DisplayName   = 'LAB-CA-Block-High-Risk-Countries-Pilot'
+        Description   = 'Block sign-ins from the configured high-risk country named location for the pilot scope.'
         RequiresNamedLocation = $true
         Conditions    = @{
-            users = @{
-                includeUsers = @('All')
-                excludeUsers = $BreakGlassUserIds
-            }
+            users = $PilotScope
             applications = @{
                 includeApplications = @('All')
             }
@@ -139,14 +208,11 @@ $PolicyDefinitions = @(
         }
     }
     @{
-        DisplayName   = 'LAB-CA-Admins-Require-MFA-And-Compliant-Device'
-        Description   = 'Require MFA and a compliant device for privileged administrator sign-ins.'
+        DisplayName   = 'LAB-CA-Admins-Require-MFA-And-Compliant-Device-Pilot'
+        Description   = 'Require MFA and a compliant device for privileged administrator testing. In pilot mode this uses supplied pilot users/groups only.'
         RequiresNamedLocation = $false
         Conditions    = @{
-            users = @{
-                includeRoles = $PrivilegedRoleTemplateIds
-                excludeUsers = $BreakGlassUserIds
-            }
+            users = $AdminScope
             applications = @{
                 includeApplications = @('All')
             }
