@@ -7,17 +7,23 @@ This document separates working lab capability from partial or planned areas and
 | Area | Status | Notes |
 | --- | --- | --- |
 | Lab architecture | Working | `docs/lab-architecture.md` describes the target lab components and evidence outputs. |
-| Deployment prerequisites | Working with cleanup backlog | Prerequisites are documented; minor formatting cleanup remains. |
+| Deployment prerequisites | Working | Prerequisites are documented in `docs/deployment-prerequisites.md`. The older `docs/prerequisites.md` stub has been merged in and removed, and formatting has been cleaned up. |
+| Documentation index | Working | The README links every document in `docs/`, with `docs/safe-execution-modes.md` linked first. |
+| Permissions matrix | Working | `docs/permissions-matrix.md` maps each script to Graph scopes, roles, and licence prerequisites. |
+| Example outputs | Working | `docs/examples/` holds synthetic baseline export and Secure Score comparison samples. |
+| Run order quick reference | Working | `docs/run-order-quick-reference.md` chains the safe sequence on one page. |
+| Community templates | Working | Issue templates and a pull request template with a safety checklist live under `.github/`. |
 | Step-by-step lab guide | Working | Provides baseline, identity, email, endpoint, data protection, monitoring, verification, and rollback phases. |
 | Rollback procedures | Working | Covers administrator lockout recovery, Conditional Access rollback, email, endpoint, DLP, and monitoring rollback scenarios. |
 | Baseline export | Working starter | `scripts/Export-M365Baseline.ps1` collects many baseline settings and skips unavailable workloads gracefully. |
 | Secure Score export | Working starter | `scripts/Get-M365SecureScore.ps1` exports current Secure Score and compares with a saved baseline where available. |
 | Conditional Access deployment | Updated safe default | `scripts/Deploy-ConditionalAccessPolicies.ps1` is pilot-scoped by default and stops unless pilot users/groups are provided or `-AllUsersScope` is explicitly used. |
 | Safe execution guidance | Working | See `docs/safe-execution-modes.md`. |
-| Verification | Partial | `scripts/Verify-M365Hardening.ps1` automates selected identity and tenant checks; email, endpoint, Purview, and monitoring evidence still require manual review. |
+| Verification | Working starter | `scripts/Verify-M365Hardening.ps1` automates read-only identity, tenant, email, endpoint, Purview, and monitoring checks where modules and sessions are available, and emits explicit manual verification lines where a check cannot be automated safely. |
 | Purview DLP deployment | Working starter | Creates or updates starter lab DLP policies; validate in audit-only mode first. |
-| Sentinel deployment | Working starter | Creates a workspace, attempts data connectors, deploys starter analytics rules, and no longer prints workspace shared keys. Review cost and teardown manually. |
-| CI | Partial | GitHub Actions runs PSScriptAnalyzer. Pester tests and dry-run validation are still missing. |
+| Sentinel deployment | Working starter | Creates a workspace, attempts data connectors, deploys starter analytics rules, supports `-WhatIf` preview, and no longer prints workspace shared keys. Review cost while the workspace is running. |
+| Sentinel teardown | Working | `scripts/Remove-SentinelWorkspace.ps1` previews by default, deletes only with `-ConfirmTeardown`, and refuses to target workspaces without `lab` in the name. |
+| CI | Working | GitHub Actions runs PSScriptAnalyzer plus Pester tests covering parameter validation, `-WhatIf` behaviour, and safe defaults for the deploy and teardown scripts. Tests run against stub commands only and never touch a tenant. |
 
 ## Safe execution rule
 
@@ -36,9 +42,15 @@ Conditional Access changes must follow this order:
 
 ## Priority backlog
 
-1. Link `docs/safe-execution-modes.md` from the README after the README can be updated safely.
-2. Add Pester tests for script parameter validation and `-WhatIf` behaviour.
-3. Add a Sentinel cleanup or teardown script for community lab users.
-4. Expand `Verify-M365Hardening.ps1` coverage for email, endpoint, Purview, and monitoring checks.
-5. Add a permissions matrix for every script.
-6. Add synthetic example outputs for evidence packs.
+1. Apply GitHub repository topics for discoverability (repository setting, maintainer action): `microsoft-365`, `azure-security`, `conditional-access`, `purview`, `sentinel`, `hardening`, `security-baseline`.
+2. Add walkthrough screenshots or a short demo recording for the identity module.
+3. Add optional checks for SharePoint and OneDrive external sharing settings to the verification script.
+
+## Completed backlog items
+
+- Link `docs/safe-execution-modes.md` from the README. Done: the README now carries a docs index and an early safety callout.
+- Add a Sentinel cleanup or teardown script. Done: `scripts/Remove-SentinelWorkspace.ps1`, documented in the lab guide closeout section.
+- Expand `Verify-M365Hardening.ps1` coverage for email, endpoint, Purview, and monitoring. Done: all checks remain strictly read-only and non-automatable checks emit manual verification lines.
+- Add Pester tests for script parameter validation and `-WhatIf` behaviour. Done: `tests/Scripts.Tests.ps1` runs in CI alongside PSScriptAnalyzer.
+- Add a permissions matrix for every script. Done: `docs/permissions-matrix.md`.
+- Add synthetic example outputs for evidence packs. Done: `docs/examples/`.

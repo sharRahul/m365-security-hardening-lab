@@ -1,0 +1,57 @@
+name: Script bug report
+description: Report a problem with one of the lab scripts.
+title: '[Bug]: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Before you paste anything, redact all tenant data: tenant names, domains, user names, object IDs, IP addresses, and workspace keys. Use placeholders like `<tenant-id>` instead.
+  - type: dropdown
+    id: script
+    attributes:
+      label: Script
+      options:
+        - Deploy-ConditionalAccessPolicies.ps1
+        - Deploy-PurviewDLP.ps1
+        - Deploy-SentinelWorkspace.ps1
+        - Remove-SentinelWorkspace.ps1
+        - Export-M365Baseline.ps1
+        - Get-M365SecureScore.ps1
+        - Verify-M365Hardening.ps1
+        - Other / not script specific
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you run, what did you expect, and what happened instead?
+      placeholder: Include the command line you used, with placeholders instead of real IDs.
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Redacted output or error
+      description: Paste the relevant output or error message with all tenant data redacted.
+      render: text
+  - type: input
+    id: powershell-version
+    attributes:
+      label: PowerShell version
+      placeholder: '7.4.6'
+  - type: input
+    id: modules
+    attributes:
+      label: Relevant module versions
+      placeholder: 'Microsoft.Graph 2.x, ExchangeOnlineManagement 3.x, Az 12.x'
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I ran this in a non-production lab tenant, or I have redacted everything that could identify a production tenant.
+          required: true
+        - label: This report contains no credentials, tokens, workspace keys, real user names, or IP addresses.
+          required: true

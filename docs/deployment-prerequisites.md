@@ -16,6 +16,12 @@ This document defines the bill of materials, roles, licences, tools, and safety 
 
 Feature availability varies by subscription, add-on, region, and tenant state. Record your actual licence before starting.
 
+Common lab licence options:
+
+- Microsoft 365 developer tenant where available.
+- Microsoft 365 E5 trial. This gives the widest control coverage.
+- Microsoft 365 E3 plus security add-ons for a reduced-scope lab.
+
 | Lab area | Commonly required capability | Notes |
 | --- | --- | --- |
 | Conditional Access | Entra ID Conditional Access capability | Use report-only first where supported. |
@@ -50,11 +56,7 @@ Use the least-privilege role required for each activity after the initial lab se
 | PowerShell 7+ | Running verification scripts and Graph commands |
 | Microsoft Graph PowerShell SDK | Querying tenant settings and reports |
 | Exchange Online PowerShell module | Reviewing mail protection settings where needed |
-| Screenshot tool | Evidence capture where export is unavailable |
-| Secure password manager | Emergency access account storage |
-
-## Recommended PowerShell modules
-| Microsoft Teams or browser session | Admin portal access |
+| Browser session | Azure portal and Microsoft 365 admin centre access |
 | Screenshot tool | Evidence capture where export is unavailable |
 | Secure password manager | Emergency access account storage |
 
@@ -99,9 +101,6 @@ Capture the following before applying hardening:
 - DLP and sensitivity label configuration.
 - Endpoint onboarding and compliance status.
 - Existing exclusions or exceptions.
-
-## Required lab record
-- Any existing exclusions or exceptions.
 
 ## Required lab records
 

@@ -1,0 +1,69 @@
+[
+  {
+    "id": "00000000-0000-0000-0000-00000000c0a1",
+    "displayName": "LAB-CA-Require-MFA-Pilot-Users",
+    "state": "enabledForReportingButNotEnforced",
+    "createdDateTime": "2026-01-15T10:24:00Z",
+    "modifiedDateTime": null,
+    "conditions": {
+      "users": {
+        "includeGroups": [
+          "00000000-0000-0000-0000-00000000f11a"
+        ],
+        "excludeUsers": [
+          "00000000-0000-0000-0000-0000000000b1",
+          "00000000-0000-0000-0000-0000000000b2"
+        ]
+      },
+      "applications": {
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "clientAppTypes": [
+        "all"
+      ]
+    },
+    "grantControls": {
+      "operator": "OR",
+      "builtInControls": [
+        "mfa"
+      ]
+    },
+    "sessionControls": null
+  },
+  {
+    "id": "00000000-0000-0000-0000-00000000c0a2",
+    "displayName": "LAB-CA-Block-Legacy-Authentication-Pilot",
+    "state": "enabledForReportingButNotEnforced",
+    "createdDateTime": "2026-01-15T10:24:05Z",
+    "modifiedDateTime": null,
+    "conditions": {
+      "users": {
+        "includeGroups": [
+          "00000000-0000-0000-0000-00000000f11a"
+        ],
+        "excludeUsers": [
+          "00000000-0000-0000-0000-0000000000b1",
+          "00000000-0000-0000-0000-0000000000b2"
+        ]
+      },
+      "applications": {
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "clientAppTypes": [
+        "exchangeActiveSync",
+        "other"
+      ]
+    },
+    "grantControls": {
+      "operator": "OR",
+      "builtInControls": [
+        "block"
+      ]
+    },
+    "sessionControls": null
+  }
+]
