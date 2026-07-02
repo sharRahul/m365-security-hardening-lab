@@ -17,7 +17,8 @@ This document separates working lab capability from partial or planned areas and
 | Safe execution guidance | Working | See `docs/safe-execution-modes.md`. |
 | Verification | Partial | `scripts/Verify-M365Hardening.ps1` automates selected identity and tenant checks; email, endpoint, Purview, and monitoring evidence still require manual review. |
 | Purview DLP deployment | Working starter | Creates or updates starter lab DLP policies; validate in audit-only mode first. |
-| Sentinel deployment | Working starter | Creates a workspace, attempts data connectors, deploys starter analytics rules, and no longer prints workspace shared keys. Review cost and teardown manually. |
+| Sentinel deployment | Working starter | Creates a workspace, attempts data connectors, deploys starter analytics rules, and no longer prints workspace shared keys. Review cost while the workspace is running. |
+| Sentinel teardown | Working | `scripts/Remove-SentinelWorkspace.ps1` previews by default, deletes only with `-ConfirmTeardown`, and refuses to target workspaces without `lab` in the name. |
 | CI | Partial | GitHub Actions runs PSScriptAnalyzer. Pester tests and dry-run validation are still missing. |
 
 ## Safe execution rule
@@ -38,11 +39,11 @@ Conditional Access changes must follow this order:
 ## Priority backlog
 
 1. Add Pester tests for script parameter validation and `-WhatIf` behaviour.
-2. Add a Sentinel cleanup or teardown script for community lab users.
-3. Expand `Verify-M365Hardening.ps1` coverage for email, endpoint, Purview, and monitoring checks.
-4. Add a permissions matrix for every script.
-5. Add synthetic example outputs for evidence packs.
+2. Expand `Verify-M365Hardening.ps1` coverage for email, endpoint, Purview, and monitoring checks.
+3. Add a permissions matrix for every script.
+4. Add synthetic example outputs for evidence packs.
 
 ## Completed backlog items
 
 - Link `docs/safe-execution-modes.md` from the README. Done: the README now carries a docs index and an early safety callout.
+- Add a Sentinel cleanup or teardown script. Done: `scripts/Remove-SentinelWorkspace.ps1`, documented in the lab guide closeout section.

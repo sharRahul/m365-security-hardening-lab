@@ -260,6 +260,38 @@ Prove that risky changes can be undone and administrator access can be recovered
 
 ## Lab closeout
 
+### Tear down the optional Sentinel workspace
+
+If you deployed the Sentinel add-on, tear it down when the lab is finished. A running Log Analytics workspace continues to incur data ingestion and retention charges even when you are no longer using it.
+
+1. Capture any remaining Sentinel evidence (alerts, incidents, connector status) before teardown.
+2. Preview the teardown. Nothing is deleted in this mode:
+
+   ```powershell
+   pwsh ./scripts/Remove-SentinelWorkspace.ps1 `
+     -ResourceGroupName rg-m365-lab-sentinel `
+     -WorkspaceName law-m365-lab
+   ```
+
+3. Review the preview summary, then run the teardown for real:
+
+   ```powershell
+   pwsh ./scripts/Remove-SentinelWorkspace.ps1 `
+     -ResourceGroupName rg-m365-lab-sentinel `
+     -WorkspaceName law-m365-lab `
+     -ConfirmTeardown
+   ```
+
+4. Add `-RemoveResourceGroup` only when the resource group was created for this lab and contains nothing else.
+
+Notes:
+
+- The script refuses to run unless the workspace name contains `lab`, as a guard against targeting a production workspace.
+- The workspace is soft deleted. Azure keeps it recoverable for 14 days and the name stays reserved during that window. Ingestion charges stop at deletion.
+- Use `-RulesOnly` to remove just the starter analytics rules and keep the workspace.
+
+### Summary report
+
 At the end of the lab, create a summary report containing:
 
 - Tenant and licence assumptions.

@@ -47,6 +47,7 @@ Use this repository to:
 │   ├── Deploy-SentinelWorkspace.ps1
 │   ├── Export-M365Baseline.ps1
 │   ├── Get-M365SecureScore.ps1
+│   ├── Remove-SentinelWorkspace.ps1
 │   └── Verify-M365Hardening.ps1
 └── .github/
     └── workflows/
@@ -113,6 +114,8 @@ pwsh ./scripts/Deploy-SentinelWorkspace.ps1 `
   -WorkspaceName law-m365-lab `
   -Location uksouth
 ```
+
+A running workspace incurs ongoing ingestion and retention charges. When the lab is finished, tear it down with [`scripts/Remove-SentinelWorkspace.ps1`](scripts/Remove-SentinelWorkspace.ps1), which previews by default and only deletes with `-ConfirmTeardown`. See the teardown section of [`docs/step-by-step-lab-guide.md`](docs/step-by-step-lab-guide.md).
 
 ### Purview add-on
 
