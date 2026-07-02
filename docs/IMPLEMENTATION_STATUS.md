@@ -19,7 +19,7 @@ This document separates working lab capability from partial or planned areas and
 | Purview DLP deployment | Working starter | Creates or updates starter lab DLP policies; validate in audit-only mode first. |
 | Sentinel deployment | Working starter | Creates a workspace, attempts data connectors, deploys starter analytics rules, supports `-WhatIf` preview, and no longer prints workspace shared keys. Review cost while the workspace is running. |
 | Sentinel teardown | Working | `scripts/Remove-SentinelWorkspace.ps1` previews by default, deletes only with `-ConfirmTeardown`, and refuses to target workspaces without `lab` in the name. |
-| CI | Partial | GitHub Actions runs PSScriptAnalyzer. Pester tests and dry-run validation are still missing. |
+| CI | Working | GitHub Actions runs PSScriptAnalyzer plus Pester tests covering parameter validation, `-WhatIf` behaviour, and safe defaults for the deploy and teardown scripts. Tests run against stub commands only and never touch a tenant. |
 
 ## Safe execution rule
 
@@ -38,12 +38,12 @@ Conditional Access changes must follow this order:
 
 ## Priority backlog
 
-1. Add Pester tests for script parameter validation and `-WhatIf` behaviour.
-2. Add a permissions matrix for every script.
-3. Add synthetic example outputs for evidence packs.
+1. Add a permissions matrix for every script.
+2. Add synthetic example outputs for evidence packs.
 
 ## Completed backlog items
 
 - Link `docs/safe-execution-modes.md` from the README. Done: the README now carries a docs index and an early safety callout.
 - Add a Sentinel cleanup or teardown script. Done: `scripts/Remove-SentinelWorkspace.ps1`, documented in the lab guide closeout section.
 - Expand `Verify-M365Hardening.ps1` coverage for email, endpoint, Purview, and monitoring. Done: all checks remain strictly read-only and non-automatable checks emit manual verification lines.
+- Add Pester tests for script parameter validation and `-WhatIf` behaviour. Done: `tests/Scripts.Tests.ps1` runs in CI alongside PSScriptAnalyzer.

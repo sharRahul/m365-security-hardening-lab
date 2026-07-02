@@ -49,6 +49,9 @@ Use this repository to:
 │   ├── Get-M365SecureScore.ps1
 │   ├── Remove-SentinelWorkspace.ps1
 │   └── Verify-M365Hardening.ps1
+├── tests/
+│   ├── Scripts.Tests.ps1
+│   └── TestStubs.ps1
 └── .github/
     └── workflows/
         └── test-scripts.yml
