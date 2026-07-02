@@ -2,11 +2,11 @@
 
 A practical, reproducible Microsoft 365 security hardening lab that guides users from a vanilla tenant to a more secure baseline across identity, email, endpoint, data protection, and monitoring controls.
 
-> **Read [`docs/safe-execution-modes.md`](docs/safe-execution-modes.md) before running any deployment script.** The Conditional Access and DLP scripts change tenant behaviour and can lock users out if run without pilot scoping, report-only mode, and tested emergency access accounts.
+> **Read [`docs/safe-execution-modes.md`](docs/safe-execution-modes.md) before running any deployment script.** The Conditional Access and DLP scripts change tenant behaviour, and the Sentinel add-on can create cost-bearing Azure resources. Use emergency access accounts, preview mode, pilot scoping, report-only or audit-only mode, validation, and rollback testing.
 
 ## Why this exists
 
-Microsoft 365 security guidance is often spread across multiple admin portals, licensing tiers, and product areas. This repository turns hardening into a structured lab with prerequisites, architecture, step-by-step configuration guidance, verification scripts, rollback procedures, and evidence-friendly outputs.
+Microsoft 365 security guidance is often spread across multiple admin portals, licensing tiers, and product areas. This repository turns hardening into a structured lab with prerequisites, architecture, step-by-step configuration guidance, verification scripts, rollback procedures, evidence-friendly outputs, and explicit boundaries between scripted and manual work.
 
 Use this repository to:
 
@@ -36,12 +36,16 @@ Use this repository to:
 │   ├── examples/
 │   ├── IMPLEMENTATION_STATUS.md
 │   ├── deployment-prerequisites.md
+│   ├── identity-module-evidence-walkthrough.md
 │   ├── iso27001-control-mapping-annex.md
 │   ├── lab-architecture.md
+│   ├── licensing-and-feature-limitations.md
 │   ├── permissions-matrix.md
 │   ├── rollback-procedures.md
 │   ├── run-order-quick-reference.md
 │   ├── safe-execution-modes.md
+│   ├── scripted-manual-optional-scope.md
+│   ├── sentinel-cost-and-teardown.md
 │   ├── step-by-step-lab-guide.md
 │   └── tenant-setup-walkthrough.md
 ├── scripts/
@@ -66,11 +70,15 @@ Use this repository to:
 
 | Document | Read it for |
 | --- | --- |
-| [`docs/safe-execution-modes.md`](docs/safe-execution-modes.md) | **Read first.** Safe defaults, pilot scoping, report-only mode, and stop conditions for the state-changing scripts. |
-| [`docs/run-order-quick-reference.md`](docs/run-order-quick-reference.md) | One-page safe sequence: emergency access, baseline, `-WhatIf`, pilot, report-only, review, enforce, rollback test. |
+| [`docs/safe-execution-modes.md`](docs/safe-execution-modes.md) | **Read first.** Standard safe sequence, pilot scoping, report-only/audit-only mode, and stop conditions. |
+| [`docs/run-order-quick-reference.md`](docs/run-order-quick-reference.md) | One-page safe sequence: emergency access, baseline, preview, pilot, report-only/audit-only, review, enforce, rollback test. |
+| [`docs/scripted-manual-optional-scope.md`](docs/scripted-manual-optional-scope.md) | What is scripted deployment, scripted verification, manual verification, and optional/licence-dependent. |
+| [`docs/licensing-and-feature-limitations.md`](docs/licensing-and-feature-limitations.md) | How to handle unavailable features, skipped checks, empty exports, and licence-dependent areas. |
+| [`docs/identity-module-evidence-walkthrough.md`](docs/identity-module-evidence-walkthrough.md) | Screenshots, exports, and command outputs to capture for the identity module. |
+| [`docs/sentinel-cost-and-teardown.md`](docs/sentinel-cost-and-teardown.md) | Sentinel cost guardrails, evidence, and cleanup procedure. |
 | [`docs/deployment-prerequisites.md`](docs/deployment-prerequisites.md) | Licences, roles, tools, and the pre-flight safety checklist. |
 | [`docs/permissions-matrix.md`](docs/permissions-matrix.md) | Graph scopes, admin roles, and licence prerequisites for each script. |
-| [`docs/tenant-setup-walkthrough.md`](docs/tenant-setup-walkthrough.md) | Setting up a fresh lab tenant, including break-glass accounts. |
+| [`docs/tenant-setup-walkthrough.md`](docs/tenant-setup-walkthrough.md) | Setting up a fresh lab tenant, including emergency access accounts. |
 | [`docs/lab-architecture.md`](docs/lab-architecture.md) | Lab components, personas, and evidence outputs. |
 | [`docs/step-by-step-lab-guide.md`](docs/step-by-step-lab-guide.md) | The full lab flow from baseline capture to closeout. |
 | [`docs/rollback-procedures.md`](docs/rollback-procedures.md) | Undoing changes and recovering from administrator lockout. |
@@ -80,34 +88,38 @@ Use this repository to:
 
 ## Quick start
 
-1. Read [`docs/deployment-prerequisites.md`](docs/deployment-prerequisites.md) and confirm your licence, role, and tenant assumptions.
-2. Review the architecture in [`docs/lab-architecture.md`](docs/lab-architecture.md).
-3. Capture the pre-change tenant state:
+1. Read [`docs/safe-execution-modes.md`](docs/safe-execution-modes.md), [`docs/run-order-quick-reference.md`](docs/run-order-quick-reference.md), and [`docs/deployment-prerequisites.md`](docs/deployment-prerequisites.md).
+2. Confirm your licence, role, tenant assumptions, and feature limitations in [`docs/licensing-and-feature-limitations.md`](docs/licensing-and-feature-limitations.md).
+3. Review the scripted/manual boundaries in [`docs/scripted-manual-optional-scope.md`](docs/scripted-manual-optional-scope.md).
+4. Confirm and test emergency access accounts.
+5. Capture the pre-change tenant state:
 
    ```powershell
    pwsh ./scripts/Export-M365Baseline.ps1
    ```
 
-4. Capture the current Microsoft Secure Score:
+6. Capture the current Microsoft Secure Score:
 
    ```powershell
    pwsh ./scripts/Get-M365SecureScore.ps1
    ```
 
-5. Follow [`docs/step-by-step-lab-guide.md`](docs/step-by-step-lab-guide.md) from baseline capture through identity, email, endpoint, data protection, and monitoring hardening.
-6. Deploy the lab Conditional Access policy set in report-only mode first:
+7. Follow [`docs/step-by-step-lab-guide.md`](docs/step-by-step-lab-guide.md) from baseline capture through identity, email, endpoint, data protection, and monitoring hardening.
+8. Deploy the lab Conditional Access policy set in report-only mode first:
 
    ```powershell
    pwsh ./scripts/Deploy-ConditionalAccessPolicies.ps1 `
      -BreakGlassUserIds @('<break-glass-object-id-1>', '<break-glass-object-id-2>') `
+     -PilotGroupIds @('<pilot-group-object-id>') `
      -HighRiskCountryCodes @('KP', 'IR', 'SY') `
      -ReportOnly
    ```
 
-7. Run [`scripts/Verify-M365Hardening.ps1`](scripts/Verify-M365Hardening.ps1) in report-only mode to check configuration state.
-8. Keep [`docs/rollback-procedures.md`](docs/rollback-procedures.md) open during the lab, especially when configuring Conditional Access or privileged access controls.
+9. Capture identity evidence using [`docs/identity-module-evidence-walkthrough.md`](docs/identity-module-evidence-walkthrough.md).
+10. Run [`scripts/Verify-M365Hardening.ps1`](scripts/Verify-M365Hardening.ps1) and review any `Manual`, `Skipped`, `NotConnected`, `Warning`, or `Fail` result.
+11. Keep [`docs/rollback-procedures.md`](docs/rollback-procedures.md) open during the lab, especially when configuring Conditional Access, DLP, or monitoring controls.
 
-### Sentinel add-on
+## Sentinel add-on
 
 The Sentinel add-on creates a Log Analytics workspace, enables Microsoft Sentinel, attempts to enable Microsoft security data connectors, and deploys starter scheduled analytics rules for common identity and Microsoft 365 attack indicators.
 
@@ -117,7 +129,17 @@ Prerequisites:
 - PowerShell modules: `Az.Accounts`, `Az.Resources`, and `Az.OperationalInsights`.
 - Appropriate Microsoft Sentinel and source workload licensing for the connectors you enable.
 
-Run:
+Preview first:
+
+```powershell
+pwsh ./scripts/Deploy-SentinelWorkspace.ps1 `
+  -ResourceGroupName rg-m365-lab-sentinel `
+  -WorkspaceName law-m365-lab `
+  -Location uksouth `
+  -WhatIf
+```
+
+Deploy:
 
 ```powershell
 pwsh ./scripts/Deploy-SentinelWorkspace.ps1 `
@@ -126,9 +148,9 @@ pwsh ./scripts/Deploy-SentinelWorkspace.ps1 `
   -Location uksouth
 ```
 
-A running workspace incurs ongoing ingestion and retention charges. When the lab is finished, tear it down with [`scripts/Remove-SentinelWorkspace.ps1`](scripts/Remove-SentinelWorkspace.ps1), which previews by default and only deletes with `-ConfirmTeardown`. See the teardown section of [`docs/step-by-step-lab-guide.md`](docs/step-by-step-lab-guide.md).
+A running workspace incurs ongoing ingestion and retention charges. When the lab is finished, tear it down with [`scripts/Remove-SentinelWorkspace.ps1`](scripts/Remove-SentinelWorkspace.ps1). See [`docs/sentinel-cost-and-teardown.md`](docs/sentinel-cost-and-teardown.md).
 
-### Purview add-on
+## Purview add-on
 
 The Purview add-on creates two audit-only DLP policies for UK personal data and financial data across Exchange, SharePoint, OneDrive, and Teams. Keep policies in audit-only mode until you have validated expected matches and false positives in the lab.
 
@@ -147,7 +169,7 @@ pwsh ./scripts/Deploy-PurviewDLP.ps1 -Enforce
 ## High-level lab flow
 
 ```text
-Baseline tenant -> Identity protection -> Email protection -> Endpoint security -> Data protection -> Monitoring -> Verification -> Rollback testing -> Evidence pack
+Emergency access -> Baseline tenant -> Identity protection -> Email protection -> Endpoint security -> Data protection -> Monitoring -> Verification -> Rollback testing -> Evidence pack
 ```
 
 ## Bill of materials summary
@@ -166,8 +188,9 @@ Baseline tenant -> Identity protection -> Email protection -> Endpoint security 
 - Create and test emergency access accounts before enforcing Conditional Access.
 - Keep at least one verified admin path outside newly created policies until validation is complete.
 - Export current settings before changing them.
-- Use report-only mode first where supported.
+- Use report-only or audit-only mode first where supported.
 - Do not test risky configuration changes directly in a production tenant.
+- Tear down the optional Sentinel workspace when testing ends.
 
 ## Audit and evidence value
 
