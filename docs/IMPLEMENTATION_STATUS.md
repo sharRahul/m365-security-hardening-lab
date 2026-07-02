@@ -12,6 +12,7 @@ This document separates working lab capability from partial or planned areas and
 | Permissions matrix | Working | `docs/permissions-matrix.md` maps each script to Graph scopes, roles, and licence prerequisites. |
 | Example outputs | Working | `docs/examples/` holds synthetic baseline export and Secure Score comparison samples. |
 | Run order quick reference | Working | `docs/run-order-quick-reference.md` chains the safe sequence on one page. |
+| Community templates | Working | Issue templates and a pull request template with a safety checklist live under `.github/`. |
 | Step-by-step lab guide | Working | Provides baseline, identity, email, endpoint, data protection, monitoring, verification, and rollback phases. |
 | Rollback procedures | Working | Covers administrator lockout recovery, Conditional Access rollback, email, endpoint, DLP, and monitoring rollback scenarios. |
 | Baseline export | Working starter | `scripts/Export-M365Baseline.ps1` collects many baseline settings and skips unavailable workloads gracefully. |
@@ -41,8 +42,9 @@ Conditional Access changes must follow this order:
 
 ## Priority backlog
 
-1. Add walkthrough screenshots or a short demo recording for the identity module.
-2. Add optional checks for SharePoint and OneDrive external sharing settings to the verification script.
+1. Apply GitHub repository topics for discoverability (repository setting, maintainer action): `microsoft-365`, `azure-security`, `conditional-access`, `purview`, `sentinel`, `hardening`, `security-baseline`.
+2. Add walkthrough screenshots or a short demo recording for the identity module.
+3. Add optional checks for SharePoint and OneDrive external sharing settings to the verification script.
 
 ## Completed backlog items
 

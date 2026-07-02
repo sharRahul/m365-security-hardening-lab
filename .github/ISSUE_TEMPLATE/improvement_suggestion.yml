@@ -1,0 +1,38 @@
+name: Improvement suggestion
+description: Suggest a new hardening control, verification check, doc improvement, or lab module.
+title: '[Suggestion]: '
+labels: ['enhancement']
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Identity and Conditional Access
+        - Email and collaboration
+        - Endpoint
+        - Data protection and Purview
+        - Monitoring and Sentinel
+        - Verification and evidence
+        - Documentation
+        - CI and tests
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: What should change and why
+      description: Describe the control, check, or improvement, and the security value it adds.
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety considerations
+      description: How should this stay safe by default? Think pilot scoping, report-only or audit-only modes, -WhatIf support, and rollback.
+  - type: input
+    id: licence
+    attributes:
+      label: Licence dependency
+      placeholder: 'For example: needs Entra ID P2, or works on E3'

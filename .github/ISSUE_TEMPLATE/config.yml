@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Safety reminder
+    url: https://github.com/sharRahul/m365-security-hardening-lab/blob/main/docs/safe-execution-modes.md
+    about: Read the safe execution modes before running the deployment scripts. Never paste real tenant data, credentials, IPs, or user names into an issue.

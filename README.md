@@ -56,6 +56,8 @@ Use this repository to:
 │   ├── Scripts.Tests.ps1
 │   └── TestStubs.ps1
 └── .github/
+    ├── ISSUE_TEMPLATE/
+    ├── pull_request_template.md
     └── workflows/
         └── test-scripts.yml
 ```
