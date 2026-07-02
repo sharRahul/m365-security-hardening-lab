@@ -44,6 +44,7 @@ Use this repository to:
 │   ├── rollback-procedures.md
 │   ├── run-order-quick-reference.md
 │   ├── safe-execution-modes.md
+│   ├── screenshot-and-evidence-capture-guide.md
 │   ├── scripted-manual-optional-scope.md
 │   ├── sentinel-cost-and-teardown.md
 │   ├── step-by-step-lab-guide.md
@@ -75,6 +76,7 @@ Use this repository to:
 | [`docs/scripted-manual-optional-scope.md`](docs/scripted-manual-optional-scope.md) | What is scripted deployment, scripted verification, manual verification, and optional/licence-dependent. |
 | [`docs/licensing-and-feature-limitations.md`](docs/licensing-and-feature-limitations.md) | How to handle unavailable features, skipped checks, empty exports, and licence-dependent areas. |
 | [`docs/identity-module-evidence-walkthrough.md`](docs/identity-module-evidence-walkthrough.md) | Screenshots, exports, and command outputs to capture for the identity module. |
+| [`docs/screenshot-and-evidence-capture-guide.md`](docs/screenshot-and-evidence-capture-guide.md) | Screenshot standards and evidence capture rules across all lab phases. |
 | [`docs/sentinel-cost-and-teardown.md`](docs/sentinel-cost-and-teardown.md) | Sentinel cost guardrails, evidence, and cleanup procedure. |
 | [`docs/deployment-prerequisites.md`](docs/deployment-prerequisites.md) | Licences, roles, tools, and the pre-flight safety checklist. |
 | [`docs/permissions-matrix.md`](docs/permissions-matrix.md) | Graph scopes, admin roles, and licence prerequisites for each script. |
@@ -92,20 +94,21 @@ Use this repository to:
 2. Confirm your licence, role, tenant assumptions, and feature limitations in [`docs/licensing-and-feature-limitations.md`](docs/licensing-and-feature-limitations.md).
 3. Review the scripted/manual boundaries in [`docs/scripted-manual-optional-scope.md`](docs/scripted-manual-optional-scope.md).
 4. Confirm and test emergency access accounts.
-5. Capture the pre-change tenant state:
+5. Capture screenshots and exports using [`docs/screenshot-and-evidence-capture-guide.md`](docs/screenshot-and-evidence-capture-guide.md).
+6. Capture the pre-change tenant state:
 
    ```powershell
    pwsh ./scripts/Export-M365Baseline.ps1
    ```
 
-6. Capture the current Microsoft Secure Score:
+7. Capture the current Microsoft Secure Score:
 
    ```powershell
    pwsh ./scripts/Get-M365SecureScore.ps1
    ```
 
-7. Follow [`docs/step-by-step-lab-guide.md`](docs/step-by-step-lab-guide.md) from baseline capture through identity, email, endpoint, data protection, and monitoring hardening.
-8. Deploy the lab Conditional Access policy set in report-only mode first:
+8. Follow [`docs/step-by-step-lab-guide.md`](docs/step-by-step-lab-guide.md) from baseline capture through identity, email, endpoint, data protection, and monitoring hardening.
+9. Deploy the lab Conditional Access policy set in report-only mode first:
 
    ```powershell
    pwsh ./scripts/Deploy-ConditionalAccessPolicies.ps1 `
@@ -115,9 +118,9 @@ Use this repository to:
      -ReportOnly
    ```
 
-9. Capture identity evidence using [`docs/identity-module-evidence-walkthrough.md`](docs/identity-module-evidence-walkthrough.md).
-10. Run [`scripts/Verify-M365Hardening.ps1`](scripts/Verify-M365Hardening.ps1) and review any `Manual`, `Skipped`, `NotConnected`, `Warning`, or `Fail` result.
-11. Keep [`docs/rollback-procedures.md`](docs/rollback-procedures.md) open during the lab, especially when configuring Conditional Access, DLP, or monitoring controls.
+10. Capture identity evidence using [`docs/identity-module-evidence-walkthrough.md`](docs/identity-module-evidence-walkthrough.md).
+11. Run [`scripts/Verify-M365Hardening.ps1`](scripts/Verify-M365Hardening.ps1) and review any `Manual`, `Skipped`, `NotConnected`, `Warning`, or `Fail` result.
+12. Keep [`docs/rollback-procedures.md`](docs/rollback-procedures.md) open during the lab, especially when configuring Conditional Access, DLP, or monitoring controls.
 
 ## Sentinel add-on
 
