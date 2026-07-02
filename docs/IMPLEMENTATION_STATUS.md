@@ -13,6 +13,7 @@ This document separates working lab capability from partial or planned areas and
 | Scripted/manual/optional scope matrix | Working | `docs/scripted-manual-optional-scope.md` separates scripted deployment, scripted verification, manual verification, and licence-dependent areas. |
 | Licensing and feature limitations | Working | `docs/licensing-and-feature-limitations.md` explains how to handle `Skipped`, `NotConnected`, `Manual`, empty, and licence-limited results. |
 | Identity evidence walkthrough | Working | `docs/identity-module-evidence-walkthrough.md` defines the screenshots, exports, and command outputs to capture for the identity module. |
+| Screenshot and evidence capture guide | Working | `docs/screenshot-and-evidence-capture-guide.md` defines screenshot standards and evidence capture rules across all lab phases. |
 | Sentinel cost and teardown guidance | Working | `docs/sentinel-cost-and-teardown.md` documents cost guardrails, evidence, and teardown checks. |
 | Permissions matrix | Working | `docs/permissions-matrix.md` maps each script to Graph scopes, roles, and licence prerequisites. |
 | Example outputs | Working | `docs/examples/` holds synthetic baseline export and Secure Score comparison samples. |
@@ -55,7 +56,7 @@ The lab now clearly documents that:
 - Some areas require manual evidence, such as emergency access sign-in, report-only review, PIM activation settings, external sharing settings, Defender portal incident review, and Sentinel connector health.
 - Some areas are licence-dependent, such as Entra ID P2, Defender for Office 365, Intune, Defender for Endpoint, Purview, and Sentinel.
 
-See [`scripted-manual-optional-scope.md`](scripted-manual-optional-scope.md) and [`licensing-and-feature-limitations.md`](licensing-and-feature-limitations.md).
+See [`scripted-manual-optional-scope.md`](scripted-manual-optional-scope.md), [`licensing-and-feature-limitations.md`](licensing-and-feature-limitations.md), and [`screenshot-and-evidence-capture-guide.md`](screenshot-and-evidence-capture-guide.md).
 
 ## Priority backlog
 
@@ -76,4 +77,5 @@ See [`scripted-manual-optional-scope.md`](scripted-manual-optional-scope.md) and
 - Add scripted/manual/optional scope matrix: `docs/scripted-manual-optional-scope.md`.
 - Add licence and feature limitation guide: `docs/licensing-and-feature-limitations.md`.
 - Add identity module evidence walkthrough: `docs/identity-module-evidence-walkthrough.md`.
+- Add screenshot and evidence capture guide: `docs/screenshot-and-evidence-capture-guide.md`.
 - Add Sentinel cost and teardown guidance: `docs/sentinel-cost-and-teardown.md`.
