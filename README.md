@@ -2,6 +2,8 @@
 
 A practical, reproducible Microsoft 365 security hardening lab that guides users from a vanilla tenant to a more secure baseline across identity, email, endpoint, data protection, and monitoring controls.
 
+> **Read [`docs/safe-execution-modes.md`](docs/safe-execution-modes.md) before running any deployment script.** The Conditional Access and DLP scripts change tenant behaviour and can lock users out if run without pilot scoping, report-only mode, and tested emergency access accounts.
+
 ## Why this exists
 
 Microsoft 365 security guidance is often spread across multiple admin portals, licensing tiers, and product areas. This repository turns hardening into a structured lab with prerequisites, architecture, step-by-step configuration guidance, verification scripts, rollback procedures, and evidence-friendly outputs.
@@ -31,11 +33,14 @@ Use this repository to:
 ├── CHANGELOG.md
 ├── LICENSE
 ├── docs/
+│   ├── IMPLEMENTATION_STATUS.md
+│   ├── deployment-prerequisites.md
 │   ├── iso27001-control-mapping-annex.md
 │   ├── lab-architecture.md
-│   ├── deployment-prerequisites.md
+│   ├── rollback-procedures.md
+│   ├── safe-execution-modes.md
 │   ├── step-by-step-lab-guide.md
-│   └── rollback-procedures.md
+│   └── tenant-setup-walkthrough.md
 ├── scripts/
 │   ├── Deploy-ConditionalAccessPolicies.ps1
 │   ├── Deploy-PurviewDLP.ps1
@@ -47,6 +52,19 @@ Use this repository to:
     └── workflows/
         └── test-scripts.yml
 ```
+
+## Documentation index
+
+| Document | Read it for |
+| --- | --- |
+| [`docs/safe-execution-modes.md`](docs/safe-execution-modes.md) | **Read first.** Safe defaults, pilot scoping, report-only mode, and stop conditions for the state-changing scripts. |
+| [`docs/deployment-prerequisites.md`](docs/deployment-prerequisites.md) | Licences, roles, tools, and the pre-flight safety checklist. |
+| [`docs/tenant-setup-walkthrough.md`](docs/tenant-setup-walkthrough.md) | Setting up a fresh lab tenant, including break-glass accounts. |
+| [`docs/lab-architecture.md`](docs/lab-architecture.md) | Lab components, personas, and evidence outputs. |
+| [`docs/step-by-step-lab-guide.md`](docs/step-by-step-lab-guide.md) | The full lab flow from baseline capture to closeout. |
+| [`docs/rollback-procedures.md`](docs/rollback-procedures.md) | Undoing changes and recovering from administrator lockout. |
+| [`docs/iso27001-control-mapping-annex.md`](docs/iso27001-control-mapping-annex.md) | Mapping lab controls to ISO 27001:2022 Annex A. |
+| [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md) | What works today, what is partial, and the priority backlog. |
 
 ## Quick start
 

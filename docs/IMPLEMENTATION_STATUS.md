@@ -7,7 +7,8 @@ This document separates working lab capability from partial or planned areas and
 | Area | Status | Notes |
 | --- | --- | --- |
 | Lab architecture | Working | `docs/lab-architecture.md` describes the target lab components and evidence outputs. |
-| Deployment prerequisites | Working with cleanup backlog | Prerequisites are documented; minor formatting cleanup remains. |
+| Deployment prerequisites | Working | Prerequisites are documented in `docs/deployment-prerequisites.md`. The older `docs/prerequisites.md` stub has been merged in and removed, and formatting has been cleaned up. |
+| Documentation index | Working | The README links every document in `docs/`, with `docs/safe-execution-modes.md` linked first. |
 | Step-by-step lab guide | Working | Provides baseline, identity, email, endpoint, data protection, monitoring, verification, and rollback phases. |
 | Rollback procedures | Working | Covers administrator lockout recovery, Conditional Access rollback, email, endpoint, DLP, and monitoring rollback scenarios. |
 | Baseline export | Working starter | `scripts/Export-M365Baseline.ps1` collects many baseline settings and skips unavailable workloads gracefully. |
@@ -36,9 +37,12 @@ Conditional Access changes must follow this order:
 
 ## Priority backlog
 
-1. Link `docs/safe-execution-modes.md` from the README after the README can be updated safely.
-2. Add Pester tests for script parameter validation and `-WhatIf` behaviour.
-3. Add a Sentinel cleanup or teardown script for community lab users.
-4. Expand `Verify-M365Hardening.ps1` coverage for email, endpoint, Purview, and monitoring checks.
-5. Add a permissions matrix for every script.
-6. Add synthetic example outputs for evidence packs.
+1. Add Pester tests for script parameter validation and `-WhatIf` behaviour.
+2. Add a Sentinel cleanup or teardown script for community lab users.
+3. Expand `Verify-M365Hardening.ps1` coverage for email, endpoint, Purview, and monitoring checks.
+4. Add a permissions matrix for every script.
+5. Add synthetic example outputs for evidence packs.
+
+## Completed backlog items
+
+- Link `docs/safe-execution-modes.md` from the README. Done: the README now carries a docs index and an early safety callout.
