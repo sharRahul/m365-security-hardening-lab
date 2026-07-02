@@ -15,7 +15,7 @@ This document separates working lab capability from partial or planned areas and
 | Secure Score export | Working starter | `scripts/Get-M365SecureScore.ps1` exports current Secure Score and compares with a saved baseline where available. |
 | Conditional Access deployment | Updated safe default | `scripts/Deploy-ConditionalAccessPolicies.ps1` is pilot-scoped by default and stops unless pilot users/groups are provided or `-AllUsersScope` is explicitly used. |
 | Safe execution guidance | Working | See `docs/safe-execution-modes.md`. |
-| Verification | Partial | `scripts/Verify-M365Hardening.ps1` automates selected identity and tenant checks; email, endpoint, Purview, and monitoring evidence still require manual review. |
+| Verification | Working starter | `scripts/Verify-M365Hardening.ps1` automates read-only identity, tenant, email, endpoint, Purview, and monitoring checks where modules and sessions are available, and emits explicit manual verification lines where a check cannot be automated safely. |
 | Purview DLP deployment | Working starter | Creates or updates starter lab DLP policies; validate in audit-only mode first. |
 | Sentinel deployment | Working starter | Creates a workspace, attempts data connectors, deploys starter analytics rules, and no longer prints workspace shared keys. Review cost while the workspace is running. |
 | Sentinel teardown | Working | `scripts/Remove-SentinelWorkspace.ps1` previews by default, deletes only with `-ConfirmTeardown`, and refuses to target workspaces without `lab` in the name. |
@@ -39,11 +39,11 @@ Conditional Access changes must follow this order:
 ## Priority backlog
 
 1. Add Pester tests for script parameter validation and `-WhatIf` behaviour.
-2. Expand `Verify-M365Hardening.ps1` coverage for email, endpoint, Purview, and monitoring checks.
-3. Add a permissions matrix for every script.
-4. Add synthetic example outputs for evidence packs.
+2. Add a permissions matrix for every script.
+3. Add synthetic example outputs for evidence packs.
 
 ## Completed backlog items
 
 - Link `docs/safe-execution-modes.md` from the README. Done: the README now carries a docs index and an early safety callout.
 - Add a Sentinel cleanup or teardown script. Done: `scripts/Remove-SentinelWorkspace.ps1`, documented in the lab guide closeout section.
+- Expand `Verify-M365Hardening.ps1` coverage for email, endpoint, Purview, and monitoring. Done: all checks remain strictly read-only and non-automatable checks emit manual verification lines.
