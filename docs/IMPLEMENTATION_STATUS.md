@@ -17,7 +17,7 @@ This document separates working lab capability from partial or planned areas and
 | Safe execution guidance | Working | See `docs/safe-execution-modes.md`. |
 | Verification | Working starter | `scripts/Verify-M365Hardening.ps1` automates read-only identity, tenant, email, endpoint, Purview, and monitoring checks where modules and sessions are available, and emits explicit manual verification lines where a check cannot be automated safely. |
 | Purview DLP deployment | Working starter | Creates or updates starter lab DLP policies; validate in audit-only mode first. |
-| Sentinel deployment | Working starter | Creates a workspace, attempts data connectors, deploys starter analytics rules, and no longer prints workspace shared keys. Review cost while the workspace is running. |
+| Sentinel deployment | Working starter | Creates a workspace, attempts data connectors, deploys starter analytics rules, supports `-WhatIf` preview, and no longer prints workspace shared keys. Review cost while the workspace is running. |
 | Sentinel teardown | Working | `scripts/Remove-SentinelWorkspace.ps1` previews by default, deletes only with `-ConfirmTeardown`, and refuses to target workspaces without `lab` in the name. |
 | CI | Partial | GitHub Actions runs PSScriptAnalyzer. Pester tests and dry-run validation are still missing. |
 

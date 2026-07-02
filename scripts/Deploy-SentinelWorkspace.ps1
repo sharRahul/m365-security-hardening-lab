@@ -7,6 +7,8 @@ Uses the Az PowerShell module to create a Log Analytics workspace, enable Micros
 
 Connector creation is licence and tenant dependent. Connector failures are reported as warnings and do not stop the workspace or analytics rule deployment.
 
+Use -WhatIf to preview every resource the script would create without creating anything.
+
 .PARAMETER ResourceGroupName
 Azure resource group used for the Log Analytics workspace.
 
@@ -17,6 +19,9 @@ Log Analytics workspace name.
 Azure region for the resource group and workspace, for example uksouth or westeurope.
 
 .EXAMPLE
+pwsh ./scripts/Deploy-SentinelWorkspace.ps1 -ResourceGroupName rg-m365-lab-sentinel -WorkspaceName law-m365-lab -Location uksouth -WhatIf
+
+.EXAMPLE
 pwsh ./scripts/Deploy-SentinelWorkspace.ps1 -ResourceGroupName rg-m365-lab-sentinel -WorkspaceName law-m365-lab -Location uksouth
 
 .NOTES
@@ -25,7 +30,7 @@ Optional module: Az.SecurityInsights.
 The script uses Azure Resource Manager REST calls for Sentinel resources to reduce dependency on cmdlet version differences.
 #>
 
-[CmdletBinding()]
+[CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
 param(
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
@@ -234,55 +239,84 @@ $tenantId = $context.Tenant.Id
 
 $resourceGroup = Get-AzResourceGroup -Name $ResourceGroupName -ErrorAction SilentlyContinue
 if ($null -eq $resourceGroup) {
-    Write-Host "Creating resource group $ResourceGroupName in $Location" -ForegroundColor Cyan
-    New-AzResourceGroup -Name $ResourceGroupName -Location $Location | Out-Null
+    if ($PSCmdlet.ShouldProcess($ResourceGroupName, "Create resource group in $Location")) {
+        Write-Host "Creating resource group $ResourceGroupName in $Location" -ForegroundColor Cyan
+        New-AzResourceGroup -Name $ResourceGroupName -Location $Location | Out-Null
+    }
 }
 
 $workspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $ResourceGroupName -Name $WorkspaceName -ErrorAction SilentlyContinue
 if ($null -eq $workspace) {
-    Write-Host "Creating Log Analytics workspace $WorkspaceName" -ForegroundColor Cyan
-    $workspace = New-AzOperationalInsightsWorkspace -ResourceGroupName $ResourceGroupName -Name $WorkspaceName -Location $Location -Sku PerGB2018
+    if ($PSCmdlet.ShouldProcess($WorkspaceName, 'Create Log Analytics workspace')) {
+        Write-Host "Creating Log Analytics workspace $WorkspaceName" -ForegroundColor Cyan
+        $workspace = New-AzOperationalInsightsWorkspace -ResourceGroupName $ResourceGroupName -Name $WorkspaceName -Location $Location -Sku PerGB2018
+    }
 } else {
     Write-Host "Log Analytics workspace $WorkspaceName already exists." -ForegroundColor Cyan
 }
 
-Write-Host 'Enabling Microsoft Sentinel on the workspace.' -ForegroundColor Cyan
-Enable-SentinelOnWorkspace -SubscriptionId $subscriptionId -ResourceGroup $ResourceGroupName -Workspace $WorkspaceName
+if ($PSCmdlet.ShouldProcess($WorkspaceName, 'Enable Microsoft Sentinel on the workspace')) {
+    Write-Host 'Enabling Microsoft Sentinel on the workspace.' -ForegroundColor Cyan
+    Enable-SentinelOnWorkspace -SubscriptionId $subscriptionId -ResourceGroup $ResourceGroupName -Workspace $WorkspaceName
+}
 
-$connectorResults = New-Object System.Collections.Generic.List[object]
-
-$connectorResults.Add((Enable-SentinelDataConnector -SubscriptionId $subscriptionId -ResourceGroup $ResourceGroupName -Workspace $WorkspaceName -ConnectorName 'Microsoft Entra ID' -Body @{
-    kind = 'AzureActiveDirectory'
-    properties = @{ tenantId = $tenantId }
-})) | Out-Null
-
-$connectorResults.Add((Enable-SentinelDataConnector -SubscriptionId $subscriptionId -ResourceGroup $ResourceGroupName -Workspace $WorkspaceName -ConnectorName 'Microsoft 365' -Body @{
-    kind = 'Office365'
-    properties = @{
-        tenantId = $tenantId
-        dataTypes = @{
-            exchange   = @{ state = 'Enabled' }
-            sharePoint = @{ state = 'Enabled' }
-            teams      = @{ state = 'Enabled' }
+$ConnectorDefinitions = @(
+    @{
+        Name = 'Microsoft Entra ID'
+        Body = @{
+            kind = 'AzureActiveDirectory'
+            properties = @{ tenantId = $tenantId }
         }
     }
-})) | Out-Null
-
-$connectorResults.Add((Enable-SentinelDataConnector -SubscriptionId $subscriptionId -ResourceGroup $ResourceGroupName -Workspace $WorkspaceName -ConnectorName 'Microsoft Defender for Cloud' -Body @{
-    kind = 'AzureSecurityCenter'
-    properties = @{ subscriptionId = $subscriptionId }
-})) | Out-Null
-
-$connectorResults.Add((Enable-SentinelDataConnector -SubscriptionId $subscriptionId -ResourceGroup $ResourceGroupName -Workspace $WorkspaceName -ConnectorName 'Microsoft Defender XDR' -Body @{
-    kind = 'MicrosoftThreatProtection'
-    properties = @{
-        tenantId = $tenantId
-        dataTypes = @{ incidents = @{ state = 'Enabled' } }
+    @{
+        Name = 'Microsoft 365'
+        Body = @{
+            kind = 'Office365'
+            properties = @{
+                tenantId = $tenantId
+                dataTypes = @{
+                    exchange   = @{ state = 'Enabled' }
+                    sharePoint = @{ state = 'Enabled' }
+                    teams      = @{ state = 'Enabled' }
+                }
+            }
+        }
     }
-})) | Out-Null
+    @{
+        Name = 'Microsoft Defender for Cloud'
+        Body = @{
+            kind = 'AzureSecurityCenter'
+            properties = @{ subscriptionId = $subscriptionId }
+        }
+    }
+    @{
+        Name = 'Microsoft Defender XDR'
+        Body = @{
+            kind = 'MicrosoftThreatProtection'
+            properties = @{
+                tenantId = $tenantId
+                dataTypes = @{ incidents = @{ state = 'Enabled' } }
+            }
+        }
+    }
+)
+
+$connectorResults = New-Object System.Collections.Generic.List[object]
+foreach ($connector in $ConnectorDefinitions) {
+    if ($PSCmdlet.ShouldProcess($connector.Name, 'Enable Sentinel data connector')) {
+        $connectorResults.Add((Enable-SentinelDataConnector -SubscriptionId $subscriptionId -ResourceGroup $ResourceGroupName -Workspace $WorkspaceName -ConnectorName $connector.Name -Body $connector.Body)) | Out-Null
+    } else {
+        $connectorResults.Add([pscustomobject]@{ Connector = $connector.Name; Status = 'WhatIf preview'; Message = 'Not enabled' }) | Out-Null
+    }
+}
 
 $ruleResults = New-Object System.Collections.Generic.List[object]
 foreach ($rule in $AnalyticsRules) {
+    if (-not $PSCmdlet.ShouldProcess($rule.DisplayName, 'Create Sentinel scheduled analytics rule')) {
+        $ruleResults.Add([pscustomobject]@{ Rule = $rule.DisplayName; Status = 'WhatIf preview' }) | Out-Null
+        continue
+    }
+
     try {
         New-SentinelScheduledRule -SubscriptionId $subscriptionId -ResourceGroup $ResourceGroupName -Workspace $WorkspaceName -Rule $rule
         $ruleResults.Add([pscustomobject]@{ Rule = $rule.DisplayName; Status = 'Created or updated' }) | Out-Null
@@ -292,7 +326,7 @@ foreach ($rule in $AnalyticsRules) {
     }
 }
 
-$workspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $ResourceGroupName -Name $WorkspaceName
+$workspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $ResourceGroupName -Name $WorkspaceName -ErrorAction SilentlyContinue
 
 Write-Host ''
 Write-Host 'Data connector results' -ForegroundColor Cyan
