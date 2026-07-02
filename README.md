@@ -33,11 +33,14 @@ Use this repository to:
 ├── CHANGELOG.md
 ├── LICENSE
 ├── docs/
+│   ├── examples/
 │   ├── IMPLEMENTATION_STATUS.md
 │   ├── deployment-prerequisites.md
 │   ├── iso27001-control-mapping-annex.md
 │   ├── lab-architecture.md
+│   ├── permissions-matrix.md
 │   ├── rollback-procedures.md
+│   ├── run-order-quick-reference.md
 │   ├── safe-execution-modes.md
 │   ├── step-by-step-lab-guide.md
 │   └── tenant-setup-walkthrough.md
@@ -62,11 +65,14 @@ Use this repository to:
 | Document | Read it for |
 | --- | --- |
 | [`docs/safe-execution-modes.md`](docs/safe-execution-modes.md) | **Read first.** Safe defaults, pilot scoping, report-only mode, and stop conditions for the state-changing scripts. |
+| [`docs/run-order-quick-reference.md`](docs/run-order-quick-reference.md) | One-page safe sequence: emergency access, baseline, `-WhatIf`, pilot, report-only, review, enforce, rollback test. |
 | [`docs/deployment-prerequisites.md`](docs/deployment-prerequisites.md) | Licences, roles, tools, and the pre-flight safety checklist. |
+| [`docs/permissions-matrix.md`](docs/permissions-matrix.md) | Graph scopes, admin roles, and licence prerequisites for each script. |
 | [`docs/tenant-setup-walkthrough.md`](docs/tenant-setup-walkthrough.md) | Setting up a fresh lab tenant, including break-glass accounts. |
 | [`docs/lab-architecture.md`](docs/lab-architecture.md) | Lab components, personas, and evidence outputs. |
 | [`docs/step-by-step-lab-guide.md`](docs/step-by-step-lab-guide.md) | The full lab flow from baseline capture to closeout. |
 | [`docs/rollback-procedures.md`](docs/rollback-procedures.md) | Undoing changes and recovering from administrator lockout. |
+| [`docs/examples/`](docs/examples/) | Synthetic sample outputs so you can see expected results without running anything. |
 | [`docs/iso27001-control-mapping-annex.md`](docs/iso27001-control-mapping-annex.md) | Mapping lab controls to ISO 27001:2022 Annex A. |
 | [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md) | What works today, what is partial, and the priority backlog. |
 

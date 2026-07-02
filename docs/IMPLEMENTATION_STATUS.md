@@ -9,6 +9,9 @@ This document separates working lab capability from partial or planned areas and
 | Lab architecture | Working | `docs/lab-architecture.md` describes the target lab components and evidence outputs. |
 | Deployment prerequisites | Working | Prerequisites are documented in `docs/deployment-prerequisites.md`. The older `docs/prerequisites.md` stub has been merged in and removed, and formatting has been cleaned up. |
 | Documentation index | Working | The README links every document in `docs/`, with `docs/safe-execution-modes.md` linked first. |
+| Permissions matrix | Working | `docs/permissions-matrix.md` maps each script to Graph scopes, roles, and licence prerequisites. |
+| Example outputs | Working | `docs/examples/` holds synthetic baseline export and Secure Score comparison samples. |
+| Run order quick reference | Working | `docs/run-order-quick-reference.md` chains the safe sequence on one page. |
 | Step-by-step lab guide | Working | Provides baseline, identity, email, endpoint, data protection, monitoring, verification, and rollback phases. |
 | Rollback procedures | Working | Covers administrator lockout recovery, Conditional Access rollback, email, endpoint, DLP, and monitoring rollback scenarios. |
 | Baseline export | Working starter | `scripts/Export-M365Baseline.ps1` collects many baseline settings and skips unavailable workloads gracefully. |
@@ -38,8 +41,8 @@ Conditional Access changes must follow this order:
 
 ## Priority backlog
 
-1. Add a permissions matrix for every script.
-2. Add synthetic example outputs for evidence packs.
+1. Add walkthrough screenshots or a short demo recording for the identity module.
+2. Add optional checks for SharePoint and OneDrive external sharing settings to the verification script.
 
 ## Completed backlog items
 
@@ -47,3 +50,5 @@ Conditional Access changes must follow this order:
 - Add a Sentinel cleanup or teardown script. Done: `scripts/Remove-SentinelWorkspace.ps1`, documented in the lab guide closeout section.
 - Expand `Verify-M365Hardening.ps1` coverage for email, endpoint, Purview, and monitoring. Done: all checks remain strictly read-only and non-automatable checks emit manual verification lines.
 - Add Pester tests for script parameter validation and `-WhatIf` behaviour. Done: `tests/Scripts.Tests.ps1` runs in CI alongside PSScriptAnalyzer.
+- Add a permissions matrix for every script. Done: `docs/permissions-matrix.md`.
+- Add synthetic example outputs for evidence packs. Done: `docs/examples/`.

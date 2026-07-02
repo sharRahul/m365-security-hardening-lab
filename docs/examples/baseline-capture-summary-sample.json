@@ -1,0 +1,65 @@
+[
+  {
+    "Item": "Conditional Access policies",
+    "Status": "Captured",
+    "File": "ConditionalAccessPolicies.json",
+    "SizeBytes": 4821,
+    "Message": "OK"
+  },
+  {
+    "Item": "MFA registration report",
+    "Status": "Captured",
+    "File": "MFARegistrationReport.json",
+    "SizeBytes": 12604,
+    "Message": "OK"
+  },
+  {
+    "Item": "Privileged role assignments",
+    "Status": "Captured",
+    "File": "PrivilegedRoleAssignments.json",
+    "SizeBytes": 6210,
+    "Message": "OK"
+  },
+  {
+    "Item": "Unified audit log status",
+    "Status": "Captured",
+    "File": "UnifiedAuditLogStatus.json",
+    "SizeBytes": 208,
+    "Message": "OK"
+  },
+  {
+    "Item": "Anti-phishing policies",
+    "Status": "Captured",
+    "File": "AntiPhishingPolicies.json",
+    "SizeBytes": 9540,
+    "Message": "OK"
+  },
+  {
+    "Item": "Safe Links and Safe Attachments",
+    "Status": "Skipped",
+    "File": "",
+    "SizeBytes": 0,
+    "Message": "Safe Links cmdlets are unavailable. Defender for Office 365 may not be licensed or the session is not connected."
+  },
+  {
+    "Item": "MDE security baseline",
+    "Status": "Skipped",
+    "File": "",
+    "SizeBytes": 0,
+    "Message": "MDE or Intune endpoint security baseline data is unavailable for this tenant or permission set."
+  },
+  {
+    "Item": "DLP policies",
+    "Status": "Captured",
+    "File": "DLPPolicies.json",
+    "SizeBytes": 3377,
+    "Message": "OK"
+  },
+  {
+    "Item": "Sensitivity labels",
+    "Status": "Captured",
+    "File": "SensitivityLabels.json",
+    "SizeBytes": 2145,
+    "Message": "OK"
+  }
+]
